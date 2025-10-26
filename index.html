@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Responsive Weather App</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    /* Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #83a4d4, #b6fbff);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      background: #fff;
+      padding: 30px 25px;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 24px;
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #ccc;
+      border-radius: 8px;
+      font-size: 16px;
+      margin-bottom: 10px;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #1976d2;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #135ba1;
+    }
+
+    .weather-box {
+      margin-top: 20px;
+      background: #f0f8ff;
+      border-radius: 10px;
+      padding: 20px;
+      text-align: left;
+      font-size: 16px;
+      color: #333;
+    }
+
+    .error {
+      color: red;
+      font-weight: bold;
+      margin-top: 15px;
+    }
+
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 20px;
+      }
+
+      .container {
+        padding: 20px 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>🌍 Weather Checker</h1>
+    <input type="text" id="city" placeholder="Enter city (e.g. Hyderabad,IN)">
+    <button onclick="getWeather()">Check Weather</button>
+
+    <div id="weather"></div>
+  </div>
+
+  <script>
+    async function getWeather() {
+      const apiKey = '951906f2bae969fe5a0ed71da9f9db79'; // Replace if needed
+      let city = document.getElementById('city').value.trim();
+
+      if (!city) {
+        document.getElementById('weather').innerHTML = '<p class="error">Please enter a city name.</p>';
+        return;
+      }
+
+      const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+
+      try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error("City not found");
+
+        const data = await response.json();
+        document.getElementById('weather').innerHTML = `
+          <div class="weather-box">
+            <p><strong>📍 Location:</strong> ${data.name}, ${data.sys.country}</p>
+            <p><strong>🌡️ Temperature:</strong> ${data.main.temp} °C</p>
+            <p><strong>🤗 Feels Like:</strong> ${data.main.feels_like} °C</p>
+            <p><strong>🌥️ Condition:</strong> ${data.weather[0].description}</p>
+            <p><strong>💧 Humidity:</strong> ${data.main.humidity}%</p>
+            <p><strong>💨 Wind Speed:</strong> ${data.wind.speed} m/s</p>
+          </div>
+        `;
+      } catch (error) {
+        document.getElementById('weather').innerHTML = `<p class="error">❌ ${error.message}</p>`;
+      }
+    }
+  </script>
+
+</body>
+</html>
